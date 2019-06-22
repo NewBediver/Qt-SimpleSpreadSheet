@@ -23,9 +23,12 @@ protected:
 
 private slots:
     void newFile();
-    void open();
-    bool save();
-    bool saveAs();
+    void openFile();
+    bool saveFile();
+    bool saveAsFile();
+    void cutEdit();
+    void copyEdit();
+    void pasteEdit();
     bool find();
     void goToCell();
     void sort();
@@ -49,12 +52,20 @@ private:
     QAction *separatorAction;
 
     QMenu *fileMenu;
+    QAction *newAction;
+    QAction *openAction;
+    QAction *saveAction;
+    QAction *saveAsAction;
+    QAction *quitAction;
+
     QMenu *editMenu;
+    QAction *cutAction;
+    QAction *copyAction;
+    QAction *pasteAction;
 
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
-    QAction *newAction;
-    QAction *openAction;
+
     QAction *aboutQtAction;
 
     void createActions();
