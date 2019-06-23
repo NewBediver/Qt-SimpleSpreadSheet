@@ -29,9 +29,14 @@ private slots:
     void cutEdit();
     void copyEdit();
     void pasteEdit();
-    bool find();
-    void goToCell();
-    void sort();
+    void deleteEdit();
+    void selectRowEdit();
+    void selectColumnEdit();
+    void selectAllEdit();
+    bool findEdit();
+    void goToCellEdit();
+    void recalculateTools();
+    void sortTools();
     void about();
     void openRecentFile();
     void updateStatusBar();
@@ -62,6 +67,17 @@ private:
     QAction *cutAction;
     QAction *copyAction;
     QAction *pasteAction;
+    QAction *deleteAction;
+        QMenu *selectSubMenu;
+        QAction *selectRowAction;
+        QAction *selectColumnAction;
+        QAction *selectAllAction;
+    QAction *findAction;
+    QAction *goToCellAction;
+
+    QMenu *toolsMenu;
+    QAction *recalculateAction;
+    QAction *sortAction;
 
     QToolBar *fileToolBar;
     QToolBar *editToolBar;

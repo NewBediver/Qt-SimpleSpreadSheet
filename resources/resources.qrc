@@ -8,5 +8,11 @@
         <file>icons/exitFile.png</file>
         <file>icons/copyEdit.png</file>
         <file>icons/pasteEdit.png</file>
+        <file>icons/deleteEdit.png</file>
+        <file>icons/selectEdit.png</file>
+        <file>icons/findEdit.png</file>
+        <file>icons/goToCellEdit.png</file>
+        <file>icons/recalculateTools.png</file>
+        <file>icons/sortTools.png</file>
     </qresource>
 </RCC>

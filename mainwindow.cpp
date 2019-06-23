@@ -73,7 +73,7 @@ void MainWindow::createActions()
     quitAction->setIcon(QIcon(":/icons/icons/exitFile.png"));
     quitAction->setShortcut(Qt::CTRL + Qt::Key::Key_Q);
     quitAction->setStatusTip("Exit program");
-    connect(quitAction, SIGNAL(triggered()), this, SLOT(closeFile()));
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     //======================= EDIT MENU =======================//
     // Cut
@@ -97,6 +97,55 @@ void MainWindow::createActions()
     pasteAction->setStatusTip(tr("Paste"));
     connect(pasteAction, SIGNAL(triggered()), this, SLOT(pasteEdit()));
 
+    // Delete
+    deleteAction = new QAction(tr("&Delete"), this);
+    deleteAction->setIcon(QIcon(":/icons/icons/deleteEdit.png"));
+    deleteAction->setShortcut(QKeySequence::Delete);
+    deleteAction->setStatusTip(tr("Delete"));
+    connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteEdit()));
+
+    // Select
+    selectRowAction = new QAction(tr("&Row"), this);
+    selectRowAction->setStatusTip(tr("Select row"));
+    connect(selectRowAction, SIGNAL(triggered()), table, SLOT(selectRowEdit()));
+    selectColumnAction = new QAction(tr("&Column"), this);
+    selectColumnAction->setStatusTip(tr("Select column"));
+    connect(selectColumnAction, SIGNAL(triggered()), this, SLOT(selectColumnEdit()));
+    selectAllAction = new QAction(tr("&All"), this);
+    selectAllAction->setShortcut(QKeySequence::SelectAll);
+    selectAllAction->setStatusTip(tr("Select all"));
+    connect(selectAllAction, SIGNAL(triggered()), table, SLOT(selectAll()));
+
+    // Find
+    findAction = new QAction(tr("&Find"),this);
+    findAction->setIcon(QIcon(":/icons/icons/findEdit.png"));
+    findAction->setShortcut(QKeySequence::Find);
+    findAction->setStatusTip(tr("Find"));
+    connect(findAction, SIGNAL(triggered()), this, SLOT(findEdit()));
+
+    // Go to cell
+    goToCellAction = new QAction(tr("&Go to cell ..."), this);
+    goToCellAction->setIcon(QIcon(":/icons/icons/goToCellEdit.png"));
+    goToCellAction->setShortcut(Qt::CTRL + Qt::Key_G);
+    goToCellAction->setStatusTip(tr("Go to cell ..."));
+    connect(goToCellAction, SIGNAL(triggered()), this, SLOT(goToCellEdit()));
+
+    //======================= TOOLS MENU =======================//
+    // Recalculate
+    recalculateAction = new QAction(tr("&Recalculate"), this);
+    recalculateAction->setIcon(QIcon(":/icons/icons/recalculateTools.png"));
+    recalculateAction->setShortcut(Qt::Key_F9);
+    recalculateAction->setStatusTip(tr("Recalculate current value"));
+    connect(recalculateAction, SIGNAL(triggered()), this, SLOT(recalculateTools()));
+
+    // Sort
+    sortAction = new QAction(tr("&Sort"), this);
+    sortAction->setIcon(QIcon(":/icons/icons/sortTools.png"));
+    sortAction->setStatusTip(tr("Call sort dialog"));
+    connect(sortAction, SIGNAL(triggered()), this, SLOT(sortTools()));
+
+    //======================= OPTIONS MENU =======================//
+
 }
 
 void MainWindow::createMenues()
@@ -115,10 +164,25 @@ void MainWindow::createMenues()
     fileMenu->addAction(quitAction);
 
     // TIE ACTION TO EDIT MENU
-    editMenu= menuBar()->addMenu(tr("&Edit"));
+    editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(cutAction);
     editMenu->addAction(copyAction);
     editMenu->addAction(pasteAction);
+    editMenu->addAction(deleteAction);
+        selectSubMenu = editMenu->addMenu(QIcon(":/icons/icons/selectEdit.png"), tr("&Select"));
+        selectSubMenu->addAction(selectRowAction);
+        selectSubMenu->addAction(selectColumnAction);
+        selectSubMenu->addAction(selectAllAction);
+    editMenu->addSeparator();
+    editMenu->addAction(findAction);
+    editMenu->addAction(goToCellAction);
+
+    // TIE ACTION TO TOOLS MENU
+    toolsMenu = menuBar()->addMenu(tr("&Tools"));
+    toolsMenu->addAction(recalculateAction);
+    toolsMenu->addAction(sortAction);
+
+    // TIE ACTION TO OPTIONS MENU
 
 }
 
@@ -183,17 +247,42 @@ void MainWindow::pasteEdit()
 
 }
 
-bool MainWindow::find()
+void MainWindow::deleteEdit()
+{
+
+}
+
+void MainWindow::selectRowEdit()
+{
+
+}
+
+void MainWindow::selectColumnEdit()
+{
+
+}
+
+void MainWindow::selectAllEdit()
+{
+
+}
+
+bool MainWindow::findEdit()
 {
     return true;
 }
 
-void MainWindow::goToCell()
+void MainWindow::goToCellEdit()
 {
 
 }
 
-void MainWindow::sort()
+void MainWindow::recalculateTools()
+{
+
+}
+
+void MainWindow::sortTools()
 {
 
 }
