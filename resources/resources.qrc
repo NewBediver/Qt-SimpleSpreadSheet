@@ -14,5 +14,9 @@
         <file>icons/goToCellEdit.png</file>
         <file>icons/recalculateTools.png</file>
         <file>icons/sortTools.png</file>
+        <file>icons/showGridOptions.png</file>
+        <file>icons/aboutHelp.png</file>
+        <file>icons/avoutQtHelp.png</file>
+        <file>icons/title.png</file>
     </qresource>
 </RCC>

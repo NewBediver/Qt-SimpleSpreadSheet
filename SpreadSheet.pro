@@ -25,10 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Cell/cell.cpp \
+        Spreadsheet/spreadsheet.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+        Cell/cell.h \
+        Spreadsheet/spreadsheet.h \
         mainwindow.h
 
 FORMS += \

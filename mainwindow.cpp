@@ -6,12 +6,21 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    table = new QTableWidget();
+    spr = new Spreadsheet();
+    /*table = new QTableWidget();
     table->setColumnCount(26);
     table->setRowCount(1000);
     table->setHorizontalHeaderLabels(QStringList() << "A" << "B" << "C" << "D" << "E" << "F" << "G" << "H" << "I" << "J" << "K" << "L" << "M" << "N" << "O" << "P" << "Q" << "R" << "S" << "T" << "U" << "V" << "W" << "X" << "Y" << "Z");
 
-    setCentralWidget(table);
+    setCentralWidget(table);*/
+
+    spr->setColumnCount(26);
+    spr->setRowCount(999);
+    setCentralWidget(spr);
+    spr->setHorizontalHeaderLabels(QStringList() << "A" << "B" << "C" << "D" << "E" << "F" << "G" << "H" << "I" << "J" << "K" << "L" << "M" << "N" << "O" << "P" << "Q" << "R" << "S" << "T" << "U" << "V" << "W" << "X" << "Y" << "Z");
+
+    this->setWindowTitle(tr("Spreadsheet"));
+    this->setWindowIcon(QIcon(":/icons/icons/title.png"));
 
     createActions();
     createMenues();
@@ -107,14 +116,14 @@ void MainWindow::createActions()
     // Select
     selectRowAction = new QAction(tr("&Row"), this);
     selectRowAction->setStatusTip(tr("Select row"));
-    connect(selectRowAction, SIGNAL(triggered()), table, SLOT(selectRowEdit()));
+    connect(selectRowAction, SIGNAL(triggered()), this, SLOT(selectRowEdit()));
     selectColumnAction = new QAction(tr("&Column"), this);
     selectColumnAction->setStatusTip(tr("Select column"));
     connect(selectColumnAction, SIGNAL(triggered()), this, SLOT(selectColumnEdit()));
     selectAllAction = new QAction(tr("&All"), this);
     selectAllAction->setShortcut(QKeySequence::SelectAll);
     selectAllAction->setStatusTip(tr("Select all"));
-    connect(selectAllAction, SIGNAL(triggered()), table, SLOT(selectAll()));
+    connect(selectAllAction, SIGNAL(triggered()), spr, SLOT(selectAll()));
 
     // Find
     findAction = new QAction(tr("&Find"),this);
@@ -145,6 +154,28 @@ void MainWindow::createActions()
     connect(sortAction, SIGNAL(triggered()), this, SLOT(sortTools()));
 
     //======================= OPTIONS MENU =======================//
+    // Grid
+    showGridAction = new QAction(tr("&Show Grid"), this);
+    showGridAction->setCheckable(true);
+    showGridAction->setChecked(spr->showGrid());
+    showGridAction->setIcon(QIcon(":/icons/icons/showGridOptions.png"));
+    showGridAction->setStatusTip(tr("Show or hide grid"));
+    connect(showGridAction, SIGNAL(toggled(bool)), spr, SLOT(setShowGrid(bool)));
+
+    // Auto recalculate
+
+
+    //======================= HELP MENU =======================//
+    aboutAction = new QAction(tr("&About"), this);
+    aboutAction->setIcon(QIcon(":/icons/icons/aboutHelp.png"));
+    aboutAction->setStatusTip(tr("Show information about program"));
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(aboutHelp()));
+
+    aboutQtAction = new QAction(tr("&About Qt"), this);
+    aboutQtAction->setIcon(QIcon(":/icons/icons/avoutQtHelp.png"));
+    aboutQtAction->setStatusTip(tr("Show thi Qt library's About box"));
+    connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
 
 }
 
@@ -183,22 +214,58 @@ void MainWindow::createMenues()
     toolsMenu->addAction(sortAction);
 
     // TIE ACTION TO OPTIONS MENU
+    optionsMenu = menuBar()->addMenu(tr("&Options"));
+    optionsMenu->addAction(showGridAction);
 
+    menuBar()->addSeparator();
+
+    //TIE ACTION TO HELP MENU
+    helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu->addAction(aboutAction);
+    helpMenu->addAction(aboutQtAction);
 }
 
 void MainWindow::createContextMenu()
 {
-
+    // Create context manu when clicking mouse righ button
+    spr->addAction(cutAction);
+    spr->addAction(copyAction);
+    spr->addAction(pasteAction);
+    spr->setContextMenuPolicy(Qt::ActionsContextMenu);
 }
 
 void MainWindow::createToolBars()
 {
+    // Create Toolbar
+    fileToolBar = addToolBar(tr("&File"));
+    fileToolBar->addAction(newAction);
+    fileToolBar->addAction(openAction);
+    fileToolBar->addAction(saveAction);
 
+    editToolBar = addToolBar(tr("&Edit"));
+    editToolBar->addAction(cutAction);
+    editToolBar->addAction(copyAction);
+    editToolBar->addAction(pasteAction);
+    editToolBar->addSeparator();
+    editToolBar->addAction(findAction);
+    editToolBar->addAction(goToCellAction);
 }
 
 void MainWindow::createStatusBar()
 {
+    locationLabel = new QLabel(" W999 ");
+    locationLabel->setAlignment(Qt::AlignCenter);
+    locationLabel->setMinimumSize(locationLabel->sizeHint());
 
+    formulaLabel = new QLabel();
+    formulaLabel->setIndent(3);
+    statusBar()->addWidget(locationLabel, 0);
+    statusBar()->addWidget(formulaLabel, 1);
+
+    connect(spr, SIGNAL(currentCellChanged(int, int, int, int)), this, SLOT(updateStatusBar()));
+    connect(spr, SIGNAL(modified()), this, SLOT(spreadSheetModified()));
+
+    updateStatusBar();
 }
 
 void MainWindow::readSettings()
@@ -287,7 +354,12 @@ void MainWindow::sortTools()
 
 }
 
-void MainWindow::about()
+void MainWindow::showGridOptions()
+{
+
+}
+
+void MainWindow::aboutHelp()
 {
 
 }
@@ -299,12 +371,14 @@ void MainWindow::openRecentFile()
 
 void MainWindow::updateStatusBar()
 {
-
+    locationLabel->setText(spr->currentLocation());
+    formulaLabel->setText(spr->currentFormula());
 }
 
 void MainWindow::spreadSheetModified()
 {
-
+    setWindowModified(true);
+    updateStatusBar();
 }
 
 void MainWindow::closeEvent(QCloseEvent *)

@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "Spreadsheet/spreadsheet.h"
+
 #include <QMainWindow>
 #include <QTableWidget>
 #include <QAction>
@@ -37,7 +39,9 @@ private slots:
     void goToCellEdit();
     void recalculateTools();
     void sortTools();
-    void about();
+    void showGridOptions();
+    //bool autoRecalculateOptions();
+    void aboutHelp();
     void openRecentFile();
     void updateStatusBar();
     void spreadSheetModified();
@@ -46,6 +50,7 @@ private:
     Ui::MainWindow *ui;
 
     // GUI
+    Spreadsheet *spr;
     QTableWidget *table;
     QLabel *locationLabel;
     QLabel *formulaLabel;
@@ -79,10 +84,16 @@ private:
     QAction *recalculateAction;
     QAction *sortAction;
 
+    QMenu *optionsMenu;
+    QAction *showGridAction;
+
+    QMenu *helpMenu;
+    QAction *aboutAction;
+    QAction *aboutQtAction;
+
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
 
-    QAction *aboutQtAction;
 
     void createActions();
     void createMenues();
