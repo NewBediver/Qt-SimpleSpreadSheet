@@ -2,24 +2,19 @@
 #include "ui_mainwindow.h"
 
 #include <QStringList>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     spr = new Spreadsheet();
-    /*table = new QTableWidget();
-    table->setColumnCount(26);
-    table->setRowCount(1000);
-    table->setHorizontalHeaderLabels(QStringList() << "A" << "B" << "C" << "D" << "E" << "F" << "G" << "H" << "I" << "J" << "K" << "L" << "M" << "N" << "O" << "P" << "Q" << "R" << "S" << "T" << "U" << "V" << "W" << "X" << "Y" << "Z");
-
-    setCentralWidget(table);*/
-
     spr->setColumnCount(26);
     spr->setRowCount(999);
     setCentralWidget(spr);
     spr->setHorizontalHeaderLabels(QStringList() << "A" << "B" << "C" << "D" << "E" << "F" << "G" << "H" << "I" << "J" << "K" << "L" << "M" << "N" << "O" << "P" << "Q" << "R" << "S" << "T" << "U" << "V" << "W" << "X" << "Y" << "Z");
 
-    this->setWindowTitle(tr("Spreadsheet"));
     this->setWindowIcon(QIcon(":/icons/icons/title.png"));
 
     createActions();
@@ -268,35 +263,80 @@ void MainWindow::createStatusBar()
     updateStatusBar();
 }
 
+void MainWindow::writeSettings()
+{
+
+}
+
 void MainWindow::readSettings()
 {
 
 }
 
+// SET CURRENT WORKING FILE AND UPDATE WINDOW TITLE
 void MainWindow::setCurrentFile(const QString &fileName)
 {
+    curFile = fileName;
+    setWindowModified(false);
 
+    QString showName = "Untilted";
+    if (!curFile.isEmpty()) {
+        showName = strippedName(curFile);
+        recentFile.removeAll(curFile);
+        recentFile.prepend(curFile);
+        updateRecentFileActions();
+    }
+
+    setWindowTitle(tr("%1[*] - %2").arg(showName).arg(tr("Spreadsheet")));
 }
 
 // Private slots
 void MainWindow::newFile()
 {
-
+    if (okToContinue()) {
+        spr->clear();
+        setCurrentFile("");
+    }
 }
 
 void MainWindow::openFile()
 {
-
+    if (okToContinue()) {
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Open Spreadsheet"), ".", tr("Spreadsheet files (*.sp)"));
+        if (!fileName.isEmpty()) {
+            loadFile(fileName);
+        }
+    }
 }
 
 bool MainWindow::saveFile()
 {
+    if (curFile.isEmpty()) {
+        return saveAsFile();
+    }
+    else {
+        return saveFile(curFile);
+    }
+}
+
+bool MainWindow::saveFile(const QString &fileName)
+{
+    if (!spr->writeFile(fileName)) {
+        statusBar()->showMessage(tr("Saving cancelled"), 2000);
+        return false;
+    }
+    setCurrentFile(fileName);
+    statusBar()->showMessage(tr("File saved"), 2000);
     return true;
 }
 
 bool MainWindow::saveAsFile()
 {
-    return true;
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Spreadsheet"), ".", tr("Spreadsheet files (*.sp)"));
+    if (fileName.isEmpty()) {
+        return false;
+    }
+    return saveFile(fileName);
 }
 
 void MainWindow::cutEdit()
@@ -364,9 +404,51 @@ void MainWindow::aboutHelp()
 
 }
 
+// OPENS RECENTLY USED FILES
 void MainWindow::openRecentFile()
 {
+    if (okToContinue()) {
+        QAction *action = qobject_cast<QAction *>(sender());
+        if (action) {
+            loadFile(action->data().toString());
+        }
+    }
+}
 
+// UPDATES LIST OF RECENTLY USED FILES
+void MainWindow::updateRecentFileActions()
+{
+    QMutableStringListIterator i(recentFile);
+    while (i.hasNext()) {
+        if (!QFile::exists(i.next())) {
+            i.remove();
+        }
+    }
+
+    for (int j = 0; j < MaxRecentFiles; ++j) {
+        if (j < recentFile.count()) {
+            QString text = tr("&%1 %2").arg(j+1).arg(strippedName(recentFile[j]));
+            recentFileActions[j]->setText(text);
+            recentFileActions[j]->setData(recentFile[j]);
+            recentFileActions[j]->setVisible(true);
+        }
+        else {
+            recentFileActions[j]->setVisible(false);
+        }
+    }
+
+    separatorAction->setVisible(!recentFile.isEmpty());
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (okToContinue()) {
+        writeSettings();
+        event->accept();
+    }
+    else {
+        event->ignore();
+    }
 }
 
 void MainWindow::updateStatusBar()
@@ -381,7 +463,38 @@ void MainWindow::spreadSheetModified()
     updateStatusBar();
 }
 
-void MainWindow::closeEvent(QCloseEvent *)
+// CREATES DIALOG WINDOW WHEN APPLICATION HAS UNSAVED DATA
+// returns true when user clicked NO ot YES and save the file
+// returns false when user clicked CANCEL
+bool MainWindow::okToContinue()
 {
+    if (isWindowModified()) {
+        int r = QMessageBox::warning(this, tr("Spreadsheet"), tr("This document has been modified.\nDo you want to save the changes?"), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        if (r == QMessageBox::Yes) {
+            return saveFile();
+        }
+        else if (r == QMessageBox::Cancel) {
+            return false;
+        }
+    }
+    return true;
+}
 
+// CHECK WHETHER LOADING IS SUCCESSED
+// return false whe loading is falled
+// return true when loading is succesed and set current working file
+bool MainWindow::loadFile(const QString &fileName)
+{
+    if (!spr->readFile(fileName)) {
+        statusBar()->showMessage(tr("Loading cancelled"), 2000);
+        return false;
+    }
+    setCurrentFile(fileName);
+    statusBar()->showMessage(tr("File loaded"), 2000);
+    return true;
+}
+
+QString MainWindow::strippedName(const QString &fullFileName)
+{
+    return QFileInfo(fullFileName).fileName();
 }

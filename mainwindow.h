@@ -21,7 +21,7 @@ public:
     ~MainWindow();
 
 protected:
-    void closeEvent(QCloseEvent *);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void newFile();
@@ -51,7 +51,6 @@ private:
 
     // GUI
     Spreadsheet *spr;
-    QTableWidget *table;
     QLabel *locationLabel;
     QLabel *formulaLabel;
     QStringList recentFile;
@@ -107,7 +106,7 @@ private:
     bool saveFile(const QString &fileName);
     void setCurrentFile(const QString &fileName);
     void updateRecentFileActions();
-    QString strippedName(const QString &fullFileNAme);
+    QString strippedName(const QString &fullFileName);
 
 };
 
