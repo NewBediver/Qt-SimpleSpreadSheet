@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "FindDialog/finddialog.h"
 
 #include <QStringList>
 #include <QMessageBox>
@@ -24,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createStatusBar();
 
     readSettings();
+    findDialog = nullptr;
 
     setCurrentFile("");
 }
@@ -374,9 +376,18 @@ void MainWindow::selectAllEdit()
 
 }
 
-bool MainWindow::findEdit()
+void MainWindow::findEdit()
 {
-    return true;
+    if (!findDialog) {
+        findDialog = new FindDialog(this);
+        connect(findDialog, SIGNAL(findNext(const QString &, Qt::CaseSensitivity)), spr, SLOT(findNext(const QString &, Qt::CaseSensitivity)));
+        connect(findDialog, SIGNAL(findPrevious(const QString &, Qt::CaseSensitivity)), spr, SLOT(findPrevious(const QString &, Qt::CaseSensitivity)));
+    }
+    findDialog->setModal(false);
+    findDialog->show();
+
+    findDialog->raise();
+    findDialog->activateWindow();
 }
 
 void MainWindow::goToCellEdit()

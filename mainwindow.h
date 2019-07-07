@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "Spreadsheet/spreadsheet.h"
+#include "FindDialog/finddialog.h"
 
 #include <QMainWindow>
 #include <QTableWidget>
@@ -35,7 +36,7 @@ private slots:
     void selectRowEdit();
     void selectColumnEdit();
     void selectAllEdit();
-    bool findEdit();
+    void findEdit();
     void goToCellEdit();
     void recalculateTools();
     void sortTools();
@@ -55,6 +56,8 @@ private:
     QLabel *formulaLabel;
     QStringList recentFile;
     QString curFile;
+
+    FindDialog *findDialog;
 
     enum {MaxRecentFiles = 5};
     QAction *recentFileActions[MaxRecentFiles];

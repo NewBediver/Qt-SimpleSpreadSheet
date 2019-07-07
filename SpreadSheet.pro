@@ -26,12 +26,14 @@ CONFIG += c++11
 
 SOURCES += \
         Cell/cell.cpp \
+        FindDialog/finddialog.cpp \
         Spreadsheet/spreadsheet.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
         Cell/cell.h \
+        FindDialog/finddialog.h \
         Spreadsheet/spreadsheet.h \
         mainwindow.h
 
