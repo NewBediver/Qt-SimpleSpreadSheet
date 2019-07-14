@@ -13,7 +13,6 @@ public:
     enum {KeyCount = 3};
     int keys[KeyCount];
     bool ascending[KeyCount];
-
 };
 
 class Spreadsheet : public QTableWidget

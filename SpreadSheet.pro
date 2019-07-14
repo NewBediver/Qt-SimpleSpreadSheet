@@ -27,6 +27,8 @@ CONFIG += c++11
 SOURCES += \
         Cell/cell.cpp \
         FindDialog/finddialog.cpp \
+        GoToCell/gotocelldialog.cpp \
+        Sort/sortdialog.cpp \
         Spreadsheet/spreadsheet.cpp \
         main.cpp \
         mainwindow.cpp
@@ -34,10 +36,13 @@ SOURCES += \
 HEADERS += \
         Cell/cell.h \
         FindDialog/finddialog.h \
+        GoToCell/gotocelldialog.h \
+        Sort/sortdialog.h \
         Spreadsheet/spreadsheet.h \
         mainwindow.h
 
 FORMS += \
+        Sort/sortdialog.ui \
         mainwindow.ui
 
 # Default rules for deployment.
@@ -46,4 +51,25 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
+    resources/resources.qrc \
     resources/resources.qrc
+
+DISTFILES += \
+    resources/icons/aboutHelp.png \
+    resources/icons/avoutQtHelp.png \
+    resources/icons/copyEdit.png \
+    resources/icons/cutEdit.png \
+    resources/icons/deleteEdit.png \
+    resources/icons/exitFile.png \
+    resources/icons/findEdit.png \
+    resources/icons/goToCellEdit.png \
+    resources/icons/newFile.png \
+    resources/icons/openFile.png \
+    resources/icons/pasteEdit.png \
+    resources/icons/recalculateTools.png \
+    resources/icons/saveAsFile.png \
+    resources/icons/saveFile.png \
+    resources/icons/selectEdit.png \
+    resources/icons/showGridOptions.png \
+    resources/icons/sortTools.png \
+    resources/icons/title.png

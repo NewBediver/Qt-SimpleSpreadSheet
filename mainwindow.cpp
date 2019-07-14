@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "FindDialog/finddialog.h"
+
+#include "GoToCell/gotocelldialog.h"
+#include "Sort/sortdialog.h"
 
 #include <QStringList>
 #include <QMessageBox>
@@ -233,6 +235,9 @@ void MainWindow::createContextMenu()
 
 void MainWindow::createToolBars()
 {
+    // Delete default toolbars
+    delete ui->mainToolBar;
+
     // Create Toolbar
     fileToolBar = addToolBar(tr("&File"));
     fileToolBar->addAction(newAction);
@@ -392,7 +397,12 @@ void MainWindow::findEdit()
 
 void MainWindow::goToCellEdit()
 {
-
+    GoToCellDialog *dialog = new GoToCellDialog(this);
+    if (dialog->exec()) {
+        QString str = dialog->getText().toUpper();
+        spr->setCurrentCell(str.mid(1).toInt() - 1, str[0].unicode() - 'A');
+    }
+    delete dialog;
 }
 
 void MainWindow::recalculateTools()
@@ -402,7 +412,19 @@ void MainWindow::recalculateTools()
 
 void MainWindow::sortTools()
 {
-
+    SortDialog dialog(this);
+    QTableWidgetSelectionRange range = spr->selectedRange();
+    dialog.setColumnRange('A' + range.leftColumn(), 'A' + range.rightColumn());
+    if (dialog.exec()) {
+        SpreadsheetCompare compare;
+        compare.keys[0] = dialog.primaryColumnCombo->currentIndex();
+        compare.keys[1] = dialog.secondaryColumnCombo->currentIndex()-1;
+        compare.keys[2] = dialog.tertiaryColumnCombo->currentIndex()-1;
+        compare.ascending[0] = (dialog.primaryOrderCombo->currentIndex() == 0);
+        compare.ascending[1] = (dialog.secondaryOrderCombo->currentIndex() == 0);
+        compare.ascending[2] = (dialog.tertiaryOrderCombo->currentIndex() == 0);
+        spr->sort(compare);
+    }
 }
 
 void MainWindow::showGridOptions()
@@ -412,7 +434,11 @@ void MainWindow::showGridOptions()
 
 void MainWindow::aboutHelp()
 {
-
+    QMessageBox::about(this, tr("About Spreadsheet"), tr("<h2>Spreadsheet</h2>"
+                                                         "<p>Spreadsheet is my first application "
+                                                         "on Qt that demonstrates QAction, QMainWindow, "
+                                                         "QMenuBar, QToolBar and many other components "
+                                                         "of Qt toolkit"));
 }
 
 // OPENS RECENTLY USED FILES
