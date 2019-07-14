@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QCloseEvent>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -25,6 +26,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createContextMenu();
     createToolBars();
     createStatusBar();
+
+    setAttribute(Qt::WA_DeleteOnClose);
+
+    for (QWidget *win : QApplication::topLevelWidgets()) {
+        if (MainWindow *mainWin = qobject_cast<MainWindow *>(win)) {
+            mainWin->updateRecentFileActions();
+        }
+    }
 
     readSettings();
     findDialog = nullptr;
@@ -76,12 +85,19 @@ void MainWindow::createActions()
         connect(recentFileActions[i], SIGNAL(triggered()), this, SLOT(openRecentFile()));
     }
 
+    //Close current window
+    closeAction = new QAction(tr("Close"), this);
+    closeAction->setIcon(QIcon(":/icons/icons/closeFile.png"));
+    closeAction->setShortcut(QKeySequence::Close);
+    closeAction->setStatusTip(tr("Close this window"));
+    connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(close()));
+
     // Quit
     quitAction = new QAction(tr("&Quit"), this);
     quitAction->setIcon(QIcon(":/icons/icons/exitFile.png"));
     quitAction->setShortcut(Qt::CTRL + Qt::Key::Key_Q);
     quitAction->setStatusTip("Exit program");
-    connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
 
     //======================= EDIT MENU =======================//
     // Cut
@@ -174,8 +190,6 @@ void MainWindow::createActions()
     aboutQtAction->setIcon(QIcon(":/icons/icons/avoutQtHelp.png"));
     aboutQtAction->setStatusTip(tr("Show thi Qt library's About box"));
     connect(aboutQtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
-
 }
 
 void MainWindow::createMenues()
@@ -191,6 +205,7 @@ void MainWindow::createMenues()
         fileMenu->addAction(recentFileActions[i]);
     }
     fileMenu->addSeparator();
+    fileMenu->addAction(closeAction);
     fileMenu->addAction(quitAction);
 
     // TIE ACTION TO EDIT MENU
@@ -272,12 +287,26 @@ void MainWindow::createStatusBar()
 
 void MainWindow::writeSettings()
 {
+    QSettings settings("Spreadsheet", "Settings");
 
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("recentFiles", recentFile);
+    settings.setValue("showGrid", showGridAction->isChecked());
+    //settings.setValue("autoRecalc");
 }
 
 void MainWindow::readSettings()
 {
+    QSettings settings("Spreadsheet", "Settings");
 
+    restoreGeometry(settings.value("geometry").toByteArray());
+    recentFile = settings.value("recentFiles").toStringList();
+    updateRecentFileActions();
+
+    bool showGrid = settings.value("showGrid", true).toBool();
+    showGridAction->setChecked(showGrid);
+
+    //bool autoRecalc;
 }
 
 // SET CURRENT WORKING FILE AND UPDATE WINDOW TITLE
@@ -300,10 +329,13 @@ void MainWindow::setCurrentFile(const QString &fileName)
 // Private slots
 void MainWindow::newFile()
 {
-    if (okToContinue()) {
+    /*if (okToContinue()) {
         spr->clear();
         setCurrentFile("");
-    }
+    }*/
+
+    MainWindow *mainWin = new MainWindow();
+    mainWin->show();
 }
 
 void MainWindow::openFile()
@@ -479,8 +511,8 @@ void MainWindow::updateRecentFileActions()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    writeSettings();
     if (okToContinue()) {
-        writeSettings();
         event->accept();
     }
     else {

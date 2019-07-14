@@ -18,5 +18,9 @@
         <file>icons/aboutHelp.png</file>
         <file>icons/avoutQtHelp.png</file>
         <file>icons/title.png</file>
+        <file>icons/closeFile.png</file>
+    </qresource>
+    <qresource prefix="/splashScreen">
+        <file>splashScreen/splash.jpg</file>
     </qresource>
 </RCC>

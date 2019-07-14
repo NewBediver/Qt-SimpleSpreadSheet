@@ -68,6 +68,7 @@ private:
     QAction *openAction;
     QAction *saveAction;
     QAction *saveAsAction;
+    QAction *closeAction;
     QAction *quitAction;
 
     QMenu *editMenu;
