@@ -29,19 +29,9 @@ private slots:
     void openFile();
     bool saveFile();
     bool saveAsFile();
-    void cutEdit();
-    void copyEdit();
-    void pasteEdit();
-    void deleteEdit();
-    void selectRowEdit();
-    void selectColumnEdit();
-    void selectAllEdit();
     void findEdit();
     void goToCellEdit();
-    void recalculateTools();
     void sortTools();
-    void showGridOptions();
-    //bool autoRecalculateOptions();
     void aboutHelp();
     void openRecentFile();
     void updateStatusBar();
@@ -89,6 +79,7 @@ private:
 
     QMenu *optionsMenu;
     QAction *showGridAction;
+    QAction *autoRecalculateAction;
 
     QMenu *helpMenu;
     QAction *aboutAction;

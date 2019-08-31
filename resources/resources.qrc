@@ -19,6 +19,7 @@
         <file>icons/avoutQtHelp.png</file>
         <file>icons/title.png</file>
         <file>icons/closeFile.png</file>
+        <file>icons/autoRecalculateOptions.png</file>
     </qresource>
     <qresource prefix="/splashScreen">
         <file>splashScreen/splash.jpg</file>

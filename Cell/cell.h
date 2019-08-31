@@ -9,7 +9,7 @@ public:
     Cell();
 
     QTableWidgetItem *clone() const;
-    void setData(int role,const QVariant &value);
+    void setData(int role, const QVariant &value);
     QVariant data(int role) const;
     void setFormula(const QString &formula);
     QString formula() const;

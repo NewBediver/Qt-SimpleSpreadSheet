@@ -24,7 +24,7 @@ bool Spreadsheet::autoRecalculate() const
 
 QString Spreadsheet::currentLocation() const
 {
-    return QChar('A' + currentColumn()) + QString::number(currentRow()+ 1);
+    return QChar('A' + currentColumn()) + QString::number(currentRow() + 1);
 }
 
 QString Spreadsheet::currentFormula() const
@@ -61,7 +61,7 @@ bool Spreadsheet::readFile(const QString &filename)
 {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::warning(this, tr("Spreadsheet"), tr("Cannot read file %1:\n%2").arg(file.fileName()).arg(file.errorString()));
+        QMessageBox::warning(this, tr("Spreadsheet"), tr("Cannot read file %1:\n%2.").arg(file.fileName()).arg(file.errorString()));
         return false;
     }
 
@@ -71,7 +71,7 @@ bool Spreadsheet::readFile(const QString &filename)
     quint32 magic;
     in >> magic;
     if (magic != MagicNumber) {
-        QMessageBox::warning(this, tr("Spreadsheet"), tr("This is not a spreadsheet file"));
+        QMessageBox::warning(this, tr("Spreadsheet"), tr("This is not a spreadsheet file."));
         return false;
     }
 
@@ -93,7 +93,7 @@ bool Spreadsheet::writeFile(const QString &filename)
 {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::warning(this, tr("Spreadsheet"), tr("Cannot write file %1:\n%2").arg(file.fileName()).arg(file.errorString()));
+        QMessageBox::warning(this, tr("Spreadsheet"), tr("Cannot write file %1:\n%2.").arg(file.fileName()).arg(file.errorString()));
         return false;
     }
 

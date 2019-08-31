@@ -105,36 +105,36 @@ void MainWindow::createActions()
     cutAction->setIcon(QIcon(":/icons/icons/cutEdit.png"));
     cutAction->setShortcut(QKeySequence::Cut);
     cutAction->setStatusTip(tr("Cut"));
-    connect(cutAction, SIGNAL(triggered()), this, SLOT(cutEdit()));
+    connect(cutAction, SIGNAL(triggered()), spr, SLOT(cutEdit()));
 
     // Copy
     copyAction = new QAction(tr("&Copy"), this);
     copyAction->setIcon(QIcon(":/icons/icons/copyEdit.png"));
     copyAction->setShortcut(QKeySequence::Copy);
     copyAction->setStatusTip(tr("Copy"));
-    connect(copyAction, SIGNAL(triggered()), this, SLOT(copyEdit()));
+    connect(copyAction, SIGNAL(triggered()), spr, SLOT(copyEdit()));
 
     // Paste
     pasteAction = new QAction(tr("&Paste"), this);
     pasteAction->setIcon(QIcon(":/icons/icons/pasteEdit.png"));
     pasteAction->setShortcut(QKeySequence::Paste);
     pasteAction->setStatusTip(tr("Paste"));
-    connect(pasteAction, SIGNAL(triggered()), this, SLOT(pasteEdit()));
+    connect(pasteAction, SIGNAL(triggered()), spr, SLOT(pasteEdit()));
 
     // Delete
     deleteAction = new QAction(tr("&Delete"), this);
     deleteAction->setIcon(QIcon(":/icons/icons/deleteEdit.png"));
     deleteAction->setShortcut(QKeySequence::Delete);
     deleteAction->setStatusTip(tr("Delete"));
-    connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteEdit()));
+    connect(deleteAction, SIGNAL(triggered()), spr, SLOT(deleteEdit()));
 
     // Select
     selectRowAction = new QAction(tr("&Row"), this);
     selectRowAction->setStatusTip(tr("Select row"));
-    connect(selectRowAction, SIGNAL(triggered()), this, SLOT(selectRowEdit()));
+    connect(selectRowAction, SIGNAL(triggered()), spr, SLOT(selectCurrentRowEdit()));
     selectColumnAction = new QAction(tr("&Column"), this);
     selectColumnAction->setStatusTip(tr("Select column"));
-    connect(selectColumnAction, SIGNAL(triggered()), this, SLOT(selectColumnEdit()));
+    connect(selectColumnAction, SIGNAL(triggered()), spr, SLOT(selectCurrentColumnEdit()));
     selectAllAction = new QAction(tr("&All"), this);
     selectAllAction->setShortcut(QKeySequence::SelectAll);
     selectAllAction->setStatusTip(tr("Select all"));
@@ -160,7 +160,7 @@ void MainWindow::createActions()
     recalculateAction->setIcon(QIcon(":/icons/icons/recalculateTools.png"));
     recalculateAction->setShortcut(Qt::Key_F9);
     recalculateAction->setStatusTip(tr("Recalculate current value"));
-    connect(recalculateAction, SIGNAL(triggered()), this, SLOT(recalculateTools()));
+    connect(recalculateAction, SIGNAL(triggered()), spr, SLOT(recalculate()));
 
     // Sort
     sortAction = new QAction(tr("&Sort"), this);
@@ -178,7 +178,12 @@ void MainWindow::createActions()
     connect(showGridAction, SIGNAL(toggled(bool)), spr, SLOT(setShowGrid(bool)));
 
     // Auto recalculate
-
+    autoRecalculateAction = new QAction(tr("&auto-Recalculate"), this);
+    autoRecalculateAction->setCheckable(true);
+    autoRecalculateAction->setChecked(spr->autoRecalculate());
+    autoRecalculateAction->setIcon(QIcon(":/icons/icons/autoRecalculateOptions.png"));
+    autoRecalculateAction->setStatusTip(tr("Auto recalculate data in the table"));
+    connect(autoRecalculateAction, SIGNAL(toggled(bool)), spr, SLOT(setAutoRecalculate(bool)));
 
     //======================= HELP MENU =======================//
     aboutAction = new QAction(tr("&About"), this);
@@ -230,6 +235,7 @@ void MainWindow::createMenues()
     // TIE ACTION TO OPTIONS MENU
     optionsMenu = menuBar()->addMenu(tr("&Options"));
     optionsMenu->addAction(showGridAction);
+    optionsMenu->addAction(autoRecalculateAction);
 
     menuBar()->addSeparator();
 
@@ -292,7 +298,7 @@ void MainWindow::writeSettings()
     settings.setValue("geometry", saveGeometry());
     settings.setValue("recentFiles", recentFile);
     settings.setValue("showGrid", showGridAction->isChecked());
-    //settings.setValue("autoRecalc");
+    settings.setValue("autoRecalc", autoRecalculateAction->isChecked());
 }
 
 void MainWindow::readSettings()
@@ -306,7 +312,8 @@ void MainWindow::readSettings()
     bool showGrid = settings.value("showGrid", true).toBool();
     showGridAction->setChecked(showGrid);
 
-    //bool autoRecalc;
+    bool autoRecalc = settings.value("123/autoAecalc", true).toBool();
+    autoRecalculateAction->setChecked(autoRecalc);
 }
 
 // SET CURRENT WORKING FILE AND UPDATE WINDOW TITLE
@@ -329,11 +336,6 @@ void MainWindow::setCurrentFile(const QString &fileName)
 // Private slots
 void MainWindow::newFile()
 {
-    /*if (okToContinue()) {
-        spr->clear();
-        setCurrentFile("");
-    }*/
-
     MainWindow *mainWin = new MainWindow();
     mainWin->show();
 }
@@ -378,41 +380,6 @@ bool MainWindow::saveAsFile()
     return saveFile(fileName);
 }
 
-void MainWindow::cutEdit()
-{
-
-}
-
-void MainWindow::copyEdit()
-{
-
-}
-
-void MainWindow::pasteEdit()
-{
-
-}
-
-void MainWindow::deleteEdit()
-{
-
-}
-
-void MainWindow::selectRowEdit()
-{
-
-}
-
-void MainWindow::selectColumnEdit()
-{
-
-}
-
-void MainWindow::selectAllEdit()
-{
-
-}
-
 void MainWindow::findEdit()
 {
     if (!findDialog) {
@@ -437,11 +404,6 @@ void MainWindow::goToCellEdit()
     delete dialog;
 }
 
-void MainWindow::recalculateTools()
-{
-
-}
-
 void MainWindow::sortTools()
 {
     SortDialog dialog(this);
@@ -457,11 +419,6 @@ void MainWindow::sortTools()
         compare.ascending[2] = (dialog.tertiaryOrderCombo->currentIndex() == 0);
         spr->sort(compare);
     }
-}
-
-void MainWindow::showGridOptions()
-{
-
 }
 
 void MainWindow::aboutHelp()
