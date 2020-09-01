@@ -45,7 +45,11 @@ My first try to use Qt for creating programs. This program is a simplified copy 
   ![options](/Screenshots/Submenu/Options%20submenu.png)
   ### Help
   ![help](/Screenshots/Submenu/Help%20submenu.png)
-
+  
+  ***
+  
+  ## Binary representation of saved project
+  ![binary](/Screenshots/Project%20encoding%20file.PNG)
 </details>
 
 ### GPL3 LICENSE SYNOPSIS
