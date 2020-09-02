@@ -1,7 +1,7 @@
 # Qt-SimpleSpreadSheet
 
 <a alt="Qt-Framework"> <img src="https://img.shields.io/badge/Qt-Framework-red" /> </a>
-<a alt="Qt-Framework"> <img src="https://img.shields.io/badge/C%2FC%2B%2B-MinGW-blue" /> </a>
+<a alt="MinGW"> <img src="https://img.shields.io/badge/C%2FC%2B%2B-MinGW-blue" /> </a>
 
 My first try to use Qt for creating programs. This program is a simplified copy of Microsoft Excel written on Qt. To compile and build the project you need any version of Qt-Framework with installed MinGW compiler.
 
